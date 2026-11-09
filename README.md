@@ -4,6 +4,8 @@ Live: https://share.mark-life.com/pierre/issues/1184/webkit-slot-crash-xo08/
 
 Open it in Safari, press on the code and drag down. The tab crashes ("This webpage was reloaded because a problem occurred").
 
+![Safari crash on drag-select in a FileDiff with renderGutterUtility](media/pierre-slot-crash.gif)
+
 | Page | Result |
 | --- | --- |
 | `?gutter=slot`: `FileDiff` with `renderGutterUtility` | Crashes |
@@ -11,6 +13,10 @@ Open it in Safari, press on the code and drag down. The tab crashes ("This webpa
 | `pure.html?move=slot`: no Pierre, a `<slot>` moved in `pointermove` | Crashes |
 | `pure.html?move=raf-slot`: same move in `requestAnimationFrame` | No crash |
 | `pure.html?move=plain`: a plain div moved instead | No crash |
+
+Without Pierre (`pure.html?move=slot`):
+
+![Safari crash on drag-select when pointermove moves a slot, no library](media/webkit-slot-crash.gif)
 
 Tested on macOS 27.2, Safari 27.2 (WebKit 22625.2.8.11.9), `@pierre/diffs` 1.6.4.
 
