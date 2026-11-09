@@ -1,0 +1,11 @@
+{
+  "name": "pierre-webkit-slot-crash",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": { "@pierre/diffs": "1.6.4" },
+  "devDependencies": { "vite": "7.1.12" }
+}

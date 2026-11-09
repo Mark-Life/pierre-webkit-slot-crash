@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>WebKit: slot moved in pointermove during selection drag (no Pierre)</title>
+    <style>
+      body { margin: 0; font-family: system-ui, sans-serif; }
+      p { margin: 8px 16px; font-size: 14px; }
+      #scroller { height: 400px; overflow: auto; border-top: 1px solid #ccc; }
+    </style>
+  </head>
+  <body>
+    <p>
+      No library. Press on the text, drag to the bottom edge of the box and keep moving a little.
+      <span id="mode"></span>
+    </p>
+    <p>
+      <a href="?move=slot">move a slot in pointermove (crashes)</a> ·
+      <a href="?move=raf-slot">move it in requestAnimationFrame (no crash)</a> ·
+      <a href="?move=plain">move a plain div (no crash)</a> ·
+      <a href="index.html">Pierre version</a>
+    </p>
+    <div id="scroller"></div>
+    <script type="module">
+      // ?lines=1500  ?move=slot|plain|raf-slot|none
+      const params = new URLSearchParams(location.search);
+      const lines = Number(params.get('lines') ?? 1500);
+      const move = params.get('move') ?? 'slot';
+      document.getElementById('mode').textContent = `(lines=${lines}, move=${move})`;
+
+      const host = document.createElement('div');
+      document.getElementById('scroller').append(host);
+      const root = host.attachShadow({ mode: 'open' });
+      root.innerHTML = `<style>
+        .grid { display: grid; grid-template-columns: min-content 1fr; font: 13px/20px monospace; }
+        .num { padding: 0 8px; color: #888; user-select: none; position: relative; }
+        .code { white-space: pre; }
+        .holder { position: absolute; left: 0; top: 0; }
+      </style><div class="grid"></div>`;
+      const grid = root.querySelector('.grid');
+      const numbers = [];
+      for (let i = 0; i < lines; i++) {
+        const num = document.createElement('div');
+        num.className = 'num';
+        num.textContent = String(i + 1);
+        num.dataset.line = String(i);
+        const code = document.createElement('div');
+        code.className = 'code';
+        code.textContent = `export const value${i} = "line ${i} of a generated file";`;
+        code.dataset.line = String(i);
+        grid.append(num, code);
+        numbers.push(num);
+      }
+
+      // Light-DOM content projected through the slot, like a custom gutter button.
+      const button = document.createElement('button');
+      button.textContent = '+';
+      button.slot = 'utility';
+      host.append(button);
+
+      const holder = document.createElement('div');
+      holder.className = 'holder';
+      if (move === 'plain') {
+        holder.textContent = '+';
+      } else {
+        const slot = document.createElement('slot');
+        slot.name = 'utility';
+        holder.append(slot);
+      }
+
+      const place = (line) => {
+        const cell = numbers[line];
+        if (cell && holder.parentNode !== cell) cell.append(holder);
+      };
+      grid.addEventListener('pointermove', (event) => {
+        if (move === 'none') return;
+        const target = event.composedPath().find((n) => n instanceof HTMLElement && n.dataset?.line);
+        if (!target) return;
+        const line = Number(target.dataset.line);
+        if (move === 'raf-slot') requestAnimationFrame(() => place(line));
+        else place(line);
+      });
+    </script>
+  </body>
+</html>

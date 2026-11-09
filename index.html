@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>@pierre/diffs WebKit drag-select crash</title>
+    <style>
+      body { margin: 0; font-family: system-ui, sans-serif; }
+      p { margin: 8px 16px; font-size: 14px; }
+      #scroller { height: 400px; overflow: auto; border-top: 1px solid #ccc; }
+    </style>
+  </head>
+  <body>
+    <p>
+      In Safari: press on the code text and drag down. The tab crashes.
+      <span id="mode"></span>
+    </p>
+    <p>
+      <a href="?gutter=slot">custom renderGutterUtility (crashes)</a> ·
+      <a href="?gutter=default">default gutter button (no crash)</a> ·
+      <a href="pure.html">same thing without Pierre</a>
+    </p>
+    <div id="scroller"></div>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
